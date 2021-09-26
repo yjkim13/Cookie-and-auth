@@ -154,7 +154,7 @@ var app = http.createServer(function(request,response){
         var list = template.list(filelist);
         var html = template.HTML(title,list,
           `
-          <form action = "login_process" method="post">
+          <form action = "/login_process" method="post">
           <p><input type="text" name="email" placeholder="email"></p>
           <p><input type="password" name="password" placeholder="password"></p>
           <p><input type="submit""></p>
@@ -164,12 +164,29 @@ var app = http.createServer(function(request,response){
         response.writeHead(200);
         response.end(html);
       })
-    } 
-    
-    else {
+    } else if (pathname === '/login_process'){
+      var body = '';
+      request.on('data', function(data){
+        body = body + data;
+      });
+      request.on('end', function(){
+          var post = qs.parse(body);
+          if(post.email === 'hobbit09@gmail.com' && post.password === '111111'){
+            response.writeHead(302, {
+              'Set-cookie':[
+                `email=${post.email}`,
+                `password=${post.password}`,
+                `nickname=kim`  
+              ],
+              Location: `/`
+            }); response.end();
+          } else {
+            response.end('Who?');
+          }
+          });
+    } else {
       response.writeHead(404);
       response.end('Not Found');
     }
-
 });
 app.listen(3000);
