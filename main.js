@@ -73,6 +73,10 @@ var app = http.createServer(function(request,response){
         });
       }
     } else if (pathname === '/create') {
+      if(authIsOwner(request,response) === false){
+        response.end('Login Required!!');
+        return false;
+      }
       fs.readdir(`./data`,function(err,filelist){
         var title = `WEB - create`
         var list = template.list(filelist);
@@ -90,13 +94,13 @@ var app = http.createServer(function(request,response){
         response.end(html);
       })
     } else if (pathname === '/create_process') {
+      if(authIsOwner(request,response) === false){
+        response.end('Login Required!!');
+        return false;
+      }
       var body = '';
       request.on('data', function(data){
         body = body + data;
-        /*
-        if (body.length >1e6)
-          request.connection.destroy();
-        */
       });
       request.on('end', function(){
           var post = qs.parse(body);
@@ -104,11 +108,18 @@ var app = http.createServer(function(request,response){
           var description = post.description;
           fs.writeFile(`data/${title}`, description, 'utf8',function(err){
             response.writeHead(302, {Location: `/?id=${title}`});
-            //페이지를 다른 곳으로 Redirection
             response.end('success');
           })
       });
     } else if (pathname === '/update') {
+      if(authIsOwner(request,response) === false){
+        response.end('Login Required!!');
+        return false;
+      }
+      if(authIsOwner(request,response) === false){
+        response.end('Login Required!!');
+        return false;
+      }
       fs.readdir(`./data`,function(err, filelist){
         var filteredId = path.parse(queryData.id).base
         fs.readFile(`data/${filteredId}`,`utf8`,function(err,description){
@@ -131,6 +142,10 @@ var app = http.createServer(function(request,response){
         });
       });
     } else if (pathname === '/update_process') {
+      if(authIsOwner(request,response) === false){
+        response.end('Login Required!!');
+        return false;
+      }
       var body = '';
       request.on('data', function(data){
         body = body + data;
@@ -154,6 +169,10 @@ var app = http.createServer(function(request,response){
           });
       });
     } else if (pathname === '/delete_process') {
+      if(authIsOwner(request,response) === false){
+        response.end('Login Required!!');
+        return false;
+      }
       var body = '';
       request.on('data', function(data){
         body = body + data;
