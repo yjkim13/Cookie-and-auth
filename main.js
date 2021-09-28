@@ -207,7 +207,24 @@ var app = http.createServer(function(request,response){
             response.end('Who?');
           }
           });
-    } else {
+    } else if (pathname === '/logout_process'){
+      var body = '';
+      request.on('data', function(data){
+        body = body + data;
+      });
+      request.on('end', function(){
+          var post = qs.parse(body);
+            response.writeHead(302, {
+              'Set-cookie':[
+                `email=; Max-age=0`,
+                `password=; Max-age=0`,
+                `nickname=; Max-age=0`  
+              ],
+              Location: `/`
+            }); response.end();
+          });
+    } 
+    else {
       response.writeHead(404);
       response.end('Not Found');
     }
